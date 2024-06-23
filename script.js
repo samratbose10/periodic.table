@@ -1,38 +1,24 @@
 let periodicTable = {};
 
-fetch('periodic_table.xlsx')
-    .then(response => {
-        if (!response.ok) throw new Error("HTTP error " + response.status);
-        return response.arrayBuffer();
-    })
+fetch('periodic_table.json')
+    .then(response => response.json())
     .then(data => {
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        console.log('Raw data:', rawData); 
-        convertToObject(rawData);
+        console.log('Data from JSON:', data);  // Log the raw data from the JSON file
+
+        periodicTable = data.reduce((acc, element) => {
+            acc[element.Symbol.toLowerCase()] = element;
+            acc[element.Name.toLowerCase()] = element;
+            return acc;
+        }, {});
+        console.log('Processed data:', periodicTable);  // Log the processed data structure
     })
     .catch(err => {
-        console.error("Failed to load Excel file:", err);
+        console.error("Failed to load JSON file:", err);
     });
 
-function convertToObject(data) {
-    const keys = data[0];
-    periodicTable = data.slice(1).reduce((acc, row) => {
-        const element = {};
-        keys.forEach((key, i) => {
-            element[key.toLowerCase()] = row[i];
-        });
-        acc[element.symbol.toLowerCase()] = element;
-        acc[element.name.toLowerCase()] = element;
-        return acc;
-    }, {});
-    console.log('Processed data:', periodicTable); 
-}
-
 function searchElement() {
-    const input = document.getElementById('elementInput').value.trim().toLowerCase();
-    const resultDiv = document.getElementById('result');
+    const input = document.getElementById('searchInput').value.trim().toLowerCase();
+    const resultDiv = document.getElementById('elementDetails');
     resultDiv.innerHTML = 'Searching...';
 
     console.log('Search input:', input); 
@@ -42,15 +28,17 @@ function searchElement() {
         return;
     }
 
+    console.log('PeriodicTable object:', periodicTable); // Log the entire periodicTable object
+
     const element = periodicTable[input];
     
-    console.log('Element found:', element); 
+    console.log('Element found:', element);  // Log the found element or undefined if not found
 
     if (element) {
         resultDiv.innerHTML = `
-            <h2>${element.name} (${element.symbol})</h2>
-            <p>Atomic Number: ${element['atomic number']}</p>
-            <p>Atomic Mass: ${element['atomic mass']}</p>
+            <h2>${element.Name} (${element.Symbol})</h2>
+            <p>Atomic Number: ${element['Atomic Number']}</p>
+            <p>Atomic Mass: ${element['Atomic Mass']}</p>
         `;
     } else {
         resultDiv.innerHTML = `<p>No element found with the name or symbol "${input}"</p>`;
