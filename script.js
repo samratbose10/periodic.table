@@ -1,45 +1,51 @@
-document.getElementById('searchButton').addEventListener('click', function() {
-    const elementName = document.getElementById('searchInput').value.toLowerCase();
-    fetchElementDetails(elementName);
-});
+async function searchElement() {
+    const input = document.getElementById('elementInput').value.trim();
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = 'Searching...';
 
-async function fetchElementDetails(elementName) {
-    console.log(`Searching for element: ${elementName}`);  // Debug log
+    if (input === "") {
+        resultDiv.innerHTML = "<p>Please enter an element name or symbol.</p>";
+        return;
+    }
 
-    const url = `https://periodic-table-api.p.rapidapi.com/search?name=${elementName}`;
-    const options = {
-        method: 'GET',
-        headers: {
-            'x-rapidapi-key': '96e1476da4msha3b6fd302117ea7p1cfe88jsnf36102d659d8',
-            'x-rapidapi-host': 'periodic-table-api.p.rapidapi.com'
-        }
-    };
+    let url;
+
+    // Check if input is a number (atomic number) or a string (element name/symbol)
+    if (!isNaN(input)) {
+        // Input is an atomic number
+        url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/element/atomicnumber/${input}/JSON`;
+    } else {
+        // Input is an element name or symbol
+        url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/element/name/${encodeURIComponent(input)}/JSON`;
+    }
 
     try {
-        const response = await fetch(url, options);
-        const result = await response.json();
-        console.log(result);  // Debug log
-        if (!result.length) {
-            throw new Error('Element not found');
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        displayElementDetails(result[0]);
-    } catch (error) {
-        console.error('Error fetching element details:', error);
-        document.getElementById('elementDetails').innerHTML = '<p>Element not found. Please try again.</p>';
-    }
-}
 
-function displayElementDetails(element) {
-    const elementDetails = `
-        <h2>${element.name} (${element.symbol})</h2>
-        <p><strong>Atomic Number:</strong> ${element.atomicNumber}</p>
-        <p><strong>Atomic Mass:</strong> ${element.atomicMass}</p>
-        <p><strong>Category:</strong> ${element.groupBlock}</p>
-        <p><strong>Appearance:</strong> ${element.appearance}</p>
-        <p><strong>Density:</strong> ${element.density} g/cm³</p>
-        <p><strong>Boil:</strong> ${element.boil} K</p>
-        <p><strong>Melt:</strong> ${element.melt} K</p>
-        <p><strong>Discovered By:</strong> ${element.discoveredBy}</p>
-    `;
-    document.getElementById('elementDetails').innerHTML = elementDetails;
+        const data = await response.json();
+
+        if (data && data.Table && data.Table.Row && data.Table.Row.length > 0) {
+            const element = data.Table.Row[0].Cell;
+            const elementDetails = {
+                name: element[0].Value,
+                symbol: element[1].Value,
+                atomicNumber: element[2].Value,
+                atomicMass: element[3].Value
+            };
+            resultDiv.innerHTML = `
+                <h2>${elementDetails.name} (${elementDetails.symbol})</h2>
+                <p>Atomic Number: ${elementDetails.atomicNumber}</p>
+                <p>Atomic Mass: ${elementDetails.atomicMass}</p>
+            `;
+        } else {
+            resultDiv.innerHTML = `<p>No element found with the name or symbol "${input}"</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+        console.error('Error fetching data:', error);
+    }
 }

@@ -4,15 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Periodic Table Search</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Periodic Table Search</h1>
-        <input type="text" id="searchInput" placeholder="Enter element name" />
-        <button id="searchButton">Search</button>
-        <div id="elementDetails"></div>
-    </div>
+    <h1>Periodic Table Search</h1>
+    <input type="text" id="elementInput" placeholder="Enter element name or symbol">
+    <button onclick="searchElement()">Search</button>
+
+    <div id="result"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
