@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Disclaimer Modal -->
+    <div id="disclaimerModal" class="modal">
+        <div class="modal-content">
+            <h2>Yo, Listen Up!</h2>
+            <p>This site is best enjoyed with some tunes. Click "Start" to get the full experience.</p>
+            <button id="startButton">Start</button>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="backgroundMusic" src="music.mp3" loop></audio>
+
     <!-- Video Background -->
     <video autoplay muted loop id="backgroundVideo">
         <source src="video.mp4" type="video/mp4">
@@ -18,6 +30,9 @@
         <input type="text" id="searchInput" placeholder="Enter element name or symbol...">
         <button onclick="searchElement()">Search</button>
         <div id="elementDetails"></div>
+        <div id="loading" class="loading-container">
+            <img src="atom.gif" alt="Loading..." class="loading-icon">
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

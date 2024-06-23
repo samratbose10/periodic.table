@@ -3,20 +3,21 @@ body, html {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: #333;
-    background-color: #f8f9fa;
 }
 
 /* Video background styles */
 #backgroundVideo {
     position: fixed;
-    right: 0;
-    bottom: 0;
+    top: 50%;
+    left: 50%;
     min-width: 100%;
     min-height: 100%;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the video covers the entire background without being zoomed in */
+    width: auto;
+    height: auto;
     z-index: -1; /* Send the video behind everything else */
+    transform: translate(-50%, -50%);
+    background-size: cover;
+    overflow: hidden;
 }
 
 .container {
@@ -28,7 +29,7 @@ body, html {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 100%;
-    max-width: 400px;
+    max-width: 750px;
     margin: auto;
     top: 50%;
     transform: translateY(-50%);
@@ -69,4 +70,63 @@ button:hover {
     text-align: left;
     font-size: 1em;
     color: #333;
+}
+
+.loading-container {
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.loading-icon {
+    width: 50px;
+    height: 50px;
+}
+
+/* Modal Styles */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 300px;
+    width: 100%;
+}
+
+.modal-content h2 {
+    margin: 0 0 10px;
+    color: #ff6363;
+}
+
+.modal-content p {
+    margin: 0 0 20px;
+}
+
+#startButton {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ff6363; /* Hack Club's red color */
+    color: #fff;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#startButton:hover {
+    background-color: #e55656;
 }
